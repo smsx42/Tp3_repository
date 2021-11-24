@@ -2,36 +2,34 @@
 
 using namespace std;
 
-void volver_menu(){
-    
-    cout << endl;
-    cout << "        " << "╔══════════════════════════════╗" << endl;
-    cout << "        " << "║Oprima 0 para volver al menu: ║" << endl;
-    cout << "        " << "╚══════════════════════════════╝" << endl;
 
-    string numero = "1";
-    cin >> numero;
-
-    while (numero != "0")
-    {
-        cout << "            " << "╔══════════════════════════╗" << endl;
-        cout << "            " << "║ ----CARACTER INVALIDO----║" << endl;
-        cout << "            " << "╚══════════════════════════╝" << endl;
-
-        cout << endl;
-        cout << "          " << "╔══════════════════════════════╗" << endl;
-        cout << "          " << "║Oprima 0 para volver al menu: ║" << endl;
-        cout << "          " << "╚══════════════════════════════╝" << endl;
-
-        cin >> numero;
-    }
-}
 
 void generar_primer_menu(){
     
     cout << "╔═════════════╗" << endl;
     cout << "║ Preparacion:║ " << endl;
     cout << "╚═════════════╝" << endl;
+
+    cout << "\t" << "╔════════════════════════════════════════╗" << endl;
+    cout << "\t" << "║ 1)- Modificar edificio por nombre.     ║" << endl;
+    cout << "\t" << "║                                        ║" << endl;
+    cout << "\t" << "║ 2)- Listar todos los edificios.        ║" << endl;
+    cout << "\t" << "║                                        ║" << endl;
+    cout << "\t" << "║ 3)- Mostrar mapa.                      ║" << endl;
+    cout << "\t" << "║                                        ║" << endl;
+    cout << "\t" << "║ 4)- Comenzar partida.                  ║" << endl;
+    cout << "\t" << "║                                        ║" << endl;
+    cout << "\t" << "║ 5)- Guardar y salir.                   ║" << endl;
+    cout << "\t" << "╚════════════════════════════════════════╝" << endl;
+
+    
+}
+
+void generar_segundo_menu(){
+
+    cout << "\t" << "╔════════════════╗" << endl;
+    cout << "\t" << "║ Menu del juego ║" << endl;
+    cout << "\t" << "╚════════════════╝" << endl;
 
     cout << "\t" << "╔════════════════════════════════════════╗" << endl;
     cout << "\t" << "║ 1)- Construir edificio por nombre.     ║" << endl;
@@ -54,6 +52,32 @@ void generar_primer_menu(){
     cout << "\t" << "║                                        ║" << endl;
     cout << "\t" << "║ 10)- Guardar y salir.                  ║" << endl;
     cout << "\t" << "╚════════════════════════════════════════╝" << endl;
+
+
+}
+
+void volver_menu(){
+    
+    cout << endl;
+    cout << "        " << "╔══════════════════════════════╗" << endl;
+    cout << "        " << "║Oprima 0 para volver al menu: ║" << endl;
+    cout << "        " << "╚══════════════════════════════╝" << endl;
+
+    string numero = "1";
+    cin >> numero;
+
+    while (numero != "0"){
+        cout << "            " << "╔══════════════════════════╗" << endl;
+        cout << "            " << "║ ----CARACTER INVALIDO----║" << endl;
+        cout << "            " << "╚══════════════════════════╝" << endl;
+
+        cout << endl;
+        cout << "          " << "╔══════════════════════════════╗" << endl;
+        cout << "          " << "║Oprima 0 para volver al menu: ║" << endl;
+        cout << "          " << "╚══════════════════════════════╝" << endl;
+
+        cin >> numero;
+    }
 }
 
 void cargar_inventario(Jugador &jugador_1, Jugador &jugador_2){
@@ -132,6 +156,45 @@ void cargar_mapa(Jugador &jugador_1, Jugador &jugador_2){
 
 }
 
+void cargar_edificios(){
+
+    ifstream archivo_edficios(PATH_EDIFICIOS);
+
+    if(!archivo_edficios.fail()){
+
+        string nombre;
+        Material materiales_requeridos[3];
+        int cantidad_piedra;
+        int cantidad_madera;
+        int cantidad_metal;
+        int cant_maxima;
+
+        Ciudad *ciudad;
+        ciudad = new Ciudad();
+
+
+        while((archivo_edficios >> nombre)){
+            (archivo_edficios >> cantidad_piedra);
+            (archivo_edficios >> cantidad_madera);
+            (archivo_edficios >> cantidad_metal);
+            (archivo_edficios >> cant_maxima);
+
+            materiales_requeridos[0].obtener_material("piedra", cantidad_piedra);
+            materiales_requeridos[1].obtener_material("madera", cantidad_madera);
+            materiales_requeridos[2].obtener_material("metal", cantidad_metal);
+
+            ciudad->insertar_nodo(nombre, materiales_requeridos, cant_maxima);
+        }
+
+        ciudad->imprimir_arbol_orden();
+
+    }
+    else{
+        cout << "Error al leer el archivo " << PATH_EDIFICIOS << endl;
+    }
+
+}
+
 void cargar_jugador(Jugador &jugador_1, Jugador &jugador_2){
 
     cargar_inventario(jugador_1, jugador_2);
@@ -146,6 +209,7 @@ void empezar_programa(){
     Jugador jugador_2;
 
     cargar_jugador(jugador_1, jugador_2);
+    cargar_edificios();
     generar_opciones(jugador_1, jugador_2);
 
     jugador_1.limpiar_inventario();
@@ -159,27 +223,28 @@ void empezar_programa(){
 void generar_opciones(Jugador jugador_1, Jugador jugador_2){
 
     int opcion = 0;
+    bool jugador_1_listo = false;
 
     cout << "Menu del primer jugador: " << endl;
-    while(opcion != OPCION_5){
+    while(opcion != OPCION_4 && opcion != OPCION_5){
         //system(CLR_SCREEN);
-       // generar_menu();
+        generar_primer_menu();
         cin >> opcion;
        // system(CLR_SCREEN);
         cout << endl;
         switch( opcion ){
             case OPCION_1:
-                jugador_1.devolver_invnetario().mostrar_inventario();
-                jugador_1.devolver_mapa().mostrar_mapa();
+                cout << "Error." << endl;
                 break;
             case OPCION_2:
                 cout << "Error." << endl;
                 break;
             case OPCION_3:
-                cout << "Error." << endl;
+                jugador_1.devolver_mapa().mostrar_mapa();
                 break;
             case OPCION_4:
-                cout << "Error." << endl;
+                cout << "El jugador 1 esta listo para comenzar el juego." << endl;
+                jugador_1_listo = true;
                 break;
             case OPCION_5:
                 break;
@@ -188,7 +253,7 @@ void generar_opciones(Jugador jugador_1, Jugador jugador_2){
                 cout << "             "     << "║ ----CARACTER INVALIDO----║" << endl;
                 cout << "             "     << "╚══════════════════════════╝" << endl;
         }
-        if(opcion != OPCION_5){
+        if(opcion != OPCION_5 || opcion != OPCION_4){
             volver_menu();
         }
     }
@@ -196,27 +261,28 @@ void generar_opciones(Jugador jugador_1, Jugador jugador_2){
     system(CLR_SCREEN);
 
     opcion = 0;
+    bool jugador_2_listo = false;
     cout << "Menu del juador 2 " << endl;
 
-    while (opcion != OPCION_5){
+    while (opcion != OPCION_4 && opcion != OPCION_5){
        // system(CLR_SCREEN);
-       // generar_menu();
+       generar_primer_menu();
         cin >> opcion;
        // system(CLR_SCREEN);
         cout << endl;
         switch( opcion ){
             case OPCION_1:
-                jugador_2.devolver_invnetario().mostrar_inventario();
-                jugador_2.devolver_mapa().mostrar_mapa();
+                cout << "Error." << endl;
                 break;
             case OPCION_2:
                 cout << "Error." << endl;
                 break;
             case OPCION_3:
-                cout << "Error." << endl;
+                jugador_2.devolver_mapa().mostrar_mapa();
                 break;
             case OPCION_4:
-                cout << "Error." << endl;
+                cout << "El jugador 2 esta listo para comenzar el juego." << endl;
+                jugador_2_listo = true;
                 break;
             case OPCION_5:
                 break;
@@ -225,14 +291,18 @@ void generar_opciones(Jugador jugador_1, Jugador jugador_2){
                 cout << "             "     << "║ ----CARACTER INVALIDO----║" << endl;
                 cout << "             "     << "╚══════════════════════════╝" << endl;
         }
-        if(opcion != OPCION_5){
+        if(opcion != OPCION_5 || opcion != OPCION_4){
             volver_menu();
         }
 
         
     }
+    
+    if(jugador_1_listo && jugador_2_listo){
+        cout << "Acaba de comenzar el juego." << endl;
 
-    cout << "Acaba de comenzar el juego." << endl;
+    }
+    
 }
 
 
