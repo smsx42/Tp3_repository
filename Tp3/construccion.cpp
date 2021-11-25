@@ -156,7 +156,7 @@ void cargar_mapa(Jugador &jugador_1, Jugador &jugador_2){
 
 }
 
-void cargar_edificios(){
+void cargar_edificios(Jugador &jugador_1, Jugador &jugador_2){
 
     ifstream archivo_edficios(PATH_EDIFICIOS);
 
@@ -169,9 +169,10 @@ void cargar_edificios(){
         int cantidad_metal;
         int cant_maxima;
 
-        Ciudad *ciudad;
-        ciudad = new Ciudad();
-
+        Ciudad ciudad_1;
+        Ciudad ciudad_2;
+        ciudad_1.crear_arbol_te();
+        ciudad_2.crear_arbol_te();
 
         while((archivo_edficios >> nombre)){
             (archivo_edficios >> cantidad_piedra);
@@ -183,15 +184,18 @@ void cargar_edificios(){
             materiales_requeridos[1].obtener_material("madera", cantidad_madera);
             materiales_requeridos[2].obtener_material("metal", cantidad_metal);
 
-            ciudad->insertar_nodo(nombre, materiales_requeridos, cant_maxima);
+            ciudad_1.devolver_arbol_te()->insertar_nodo(nombre, materiales_requeridos, cant_maxima);
+            ciudad_2.devolver_arbol_te()->insertar_nodo(nombre, materiales_requeridos, cant_maxima);
         }
 
-        ciudad->imprimir_arbol_orden();
-
+        jugador_1.obtener_ciudad(ciudad_1);
+        jugador_2.obtener_ciudad(ciudad_2);
     }
     else{
         cout << "Error al leer el archivo " << PATH_EDIFICIOS << endl;
     }
+
+    archivo_edficios.close();
 
 }
 
@@ -199,7 +203,18 @@ void cargar_jugador(Jugador &jugador_1, Jugador &jugador_2){
 
     cargar_inventario(jugador_1, jugador_2);
     cargar_mapa(jugador_1, jugador_2);
+    cargar_edificios(jugador_1, jugador_2);
 
+}
+
+void limpiar_programa(Jugador jugador_1, Jugador jugador_2){
+
+    jugador_1.limpiar_inventario();
+    jugador_2.limpiar_inventario();
+    jugador_1.limpiar_mapa();
+    jugador_2.limpiar_mapa();
+    jugador_1.limpiar_ciudad();
+    jugador_2.limpiar_ciudad();
 }
 
 
@@ -209,13 +224,9 @@ void empezar_programa(){
     Jugador jugador_2;
 
     cargar_jugador(jugador_1, jugador_2);
-    cargar_edificios();
     generar_opciones(jugador_1, jugador_2);
 
-    jugador_1.limpiar_inventario();
-    jugador_2.limpiar_inventario();
-    jugador_1.limpiar_mapa();
-    jugador_2.limpiar_mapa();
+    limpiar_programa(jugador_1, jugador_2);
 
 }
 
@@ -237,7 +248,7 @@ void generar_opciones(Jugador jugador_1, Jugador jugador_2){
                 cout << "Error." << endl;
                 break;
             case OPCION_2:
-                cout << "Error." << endl;
+                jugador_1.devolver_ciudad().devolver_arbol_te()->imprimir_arbol_orden();
                 break;
             case OPCION_3:
                 jugador_1.devolver_mapa().mostrar_mapa();
@@ -275,7 +286,7 @@ void generar_opciones(Jugador jugador_1, Jugador jugador_2){
                 cout << "Error." << endl;
                 break;
             case OPCION_2:
-                cout << "Error." << endl;
+                jugador_2.devolver_ciudad().devolver_arbol_te()->imprimir_arbol_orden();
                 break;
             case OPCION_3:
                 jugador_2.devolver_mapa().mostrar_mapa();
